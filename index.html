@@ -2,33 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bank of Benny</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bank of Benny | Home</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
 }
+
 header {
-  background: white;
+  background: var(--card-bg);
   width: 100%;
-  padding: 1rem 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
+
 .brand {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #4f46e5;
+  color: var(--primary);
   text-decoration: none;
   display: flex;
 }
@@ -43,100 +60,149 @@ header {
 @keyframes spread {
   to { max-width: 80px; opacity: 1; }
 }
+
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .nav-links a {
   text-decoration: none;
-  color: #4b5563;
+  color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: color 0.2s;
 }
 .nav-links a:hover {
-  color: #4f46e5;
+  color: var(--primary);
 }
+
 .hero {
-  padding: 3rem 2rem;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  padding: 3rem 1.5rem;
+  margin: 2rem auto;
   max-width: 800px;
-  width: 90%;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 h1 {
   font-size: 2.5rem;
-  color: #111827;
+  color: var(--text-main);
   margin-top: 0;
   text-align: center;
+  line-height: 1.2;
 }
+
 p.subtitle {
-  color: #6b7280;
+  color: var(--text-muted);
   text-align: center;
   font-size: 1.1rem;
   margin-bottom: 2.5rem;
+  line-height: 1.6;
 }
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
+
 .feature {
-  background: #f9fafb;
+  background: var(--card-bg);
   padding: 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
 }
+
 .feature h3 {
-  color: #4f46e5;
+  color: var(--primary);
   margin-top: 0;
+  font-size: 1.125rem;
 }
+
+.feature p {
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .steps {
   background: #e0e7ff;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  margin-bottom: 2.5rem;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 3rem;
 }
+
 .steps h3 {
   margin-top: 0;
   color: #3730a3;
+  font-size: 1.25rem;
 }
+
 .steps ol {
-  padding-left: 1.5rem;
+  padding-left: 1.25rem;
   color: #312e81;
   font-weight: 500;
   line-height: 1.8;
+  margin-bottom: 0;
 }
+
 .actions {
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
+
 .btn {
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-radius: 0.75rem;
   font-weight: 600;
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: all 0.2s;
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+  box-sizing: border-box;
 }
+
 .btn-primary {
-  background: #4f46e5;
+  background: var(--primary);
   color: white;
+  border: 2px solid var(--primary);
 }
-.btn-primary:hover {
-  background: #4338ca;
-  transform: translateY(-2px);
+
+.btn-primary:active {
+  transform: scale(0.98);
 }
+
 .btn-secondary {
-  background: white;
-  color: #4f46e5;
-  border: 2px solid #4f46e5;
+  background: var(--card-bg);
+  color: var(--primary);
+  border: 2px solid var(--border);
 }
-.btn-secondary:hover {
+
+.btn-secondary:active {
+  transform: scale(0.98);
   background: #f5f3ff;
-  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nav-links {
+    justify-content: center;
+    width: 100%;
+  }
+  h1 { font-size: 2rem; }
 }
 </style>
 </head>

@@ -214,7 +214,7 @@ p.subtitle {
 <body>
   <header>
     <a href="index.html" class="brand">B<span>ank </span>O<span>f </span>B<span>enny</span></a>
-    <div class="nav-links">
+    <div class="nav-links" id="main-nav">
       <a href="index.html">Home</a>
       <a href="login.html">Log In</a>
       <a href="signup.html">Sign Up</a>
@@ -254,10 +254,46 @@ p.subtitle {
       </ol>
     </div>
     
-    <div class="actions">
+    <div class="actions" id="hero-actions">
       <a href="login.html" class="btn btn-primary">Log In to Account</a>
       <a href="signup.html" class="btn btn-secondary">Create New Account</a>
     </div>
   </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const uName = localStorage.getItem('bankUserName');
+  const uLogin = localStorage.getItem('bankUserLogin');
+  const uRole = localStorage.getItem('bankUserRole') || 'kid';
+  
+  if (uLogin) {
+    const dashLink = uRole === 'admin' ? 'app/users/admin/index.html' : 'app/users/index.html';
+    const nav = document.getElementById('main-nav');
+    const actions = document.getElementById('hero-actions');
+    
+    if (nav) {
+      nav.innerHTML = `
+        <a href="index.html">Home</a>
+        <a href="${dashLink}">Dashboard</a>
+        <span style="color: var(--primary); font-weight: 700; background: #e0e7ff; padding: 0.4rem 0.8rem; border-radius: 9999px;">${uName}</span>
+        <a href="#" onclick="logoutApp()" style="color: #ef4444;">Log Out</a>
+      `;
+    }
+    
+    if (actions) {
+      actions.innerHTML = `
+        <a href="${dashLink}" class="btn btn-primary">Go to Dashboard</a>
+      `;
+    }
+  }
+});
+
+function logoutApp() {
+  localStorage.removeItem('bankUserName');
+  localStorage.removeItem('bankUserLogin');
+  localStorage.removeItem('bankUserRole');
+  window.location.reload();
+}
+</script>
 </body>
 </html>

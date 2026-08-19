@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank System | Dashboard</title>
 <link rel="icon" type="image/png" href="../../bank.png">
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -474,7 +473,6 @@ video, img#photo-preview {
 
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
-const GEMINI_API_KEY = 'AQ.Ab8RN6I-SfRtvFWOZIjMaSgEw3BgE0gEFh6BjS6yIgpB2DzaEw';
 
 let currentFacingMode = 'environment';
 let stream = null;
@@ -583,7 +581,6 @@ async function init() {
   document.getElementById('header-name').innerText = userName + "'s Account";
 
   try {
-    // FIXED: Appended a timestamp cache-buster so the browser ALWAYS gets fresh data
     const response = await fetch(WEB_APP_URL + "?nocache=" + new Date().getTime(), { redirect: 'follow' });
     const data = await response.json();
     
@@ -647,42 +644,15 @@ async function submitPurchase() {
   
   const btn = document.getElementById('btn-submit');
   btn.disabled = true;
+  btn.innerText = 'Uploading and Scanning with AI...';
   
   let imageType = null;
   let fileName = null;
-  let receiptText = "";
   
   if (capturedImageBase64) {
     imageType = 'image/jpeg';
     fileName = 'receipt_' + Date.now() + '.jpg';
-    
-    btn.innerText = 'Scanning receipt with AI...';
-    
-    const base64Data = capturedImageBase64.split(',')[1];
-    const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_API_KEY;
-    const geminiPayload = {
-      contents: [{
-        parts: [
-          {text: "Extract all text from this receipt. Summarize the total and main items if possible."},
-          {inline_data: {mime_type: "image/jpeg", data: base64Data}}
-        ]
-      }]
-    };
-    
-    try {
-      const geminiRes = await fetch(geminiUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(geminiPayload)
-      });
-      const geminiData = await geminiRes.json();
-      if (geminiData.candidates && geminiData.candidates.length > 0) {
-        receiptText = geminiData.candidates[0].content.parts[0].text;
-      }
-    } catch(e) {}
   }
-  
-  btn.innerText = 'Loading...';
   
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
@@ -695,8 +665,7 @@ async function submitPurchase() {
     cost: cost,
     image: capturedImageBase64,
     imageType: imageType,
-    fileName: fileName,
-    receiptText: receiptText
+    fileName: fileName
   };
   
   try {

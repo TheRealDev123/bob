@@ -2,33 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank of Benny | Sign Up</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
+
 header {
-  background: white;
+  background: var(--card-bg);
   width: 100%;
-  padding: 1rem 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
+
 .brand {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #4f46e5;
+  color: var(--primary);
   text-decoration: none;
   display: flex;
 }
@@ -43,113 +59,160 @@ header {
 @keyframes spread {
   to { max-width: 80px; opacity: 1; }
 }
+
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .nav-links a {
   text-decoration: none;
-  color: #4b5563;
+  color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: color 0.2s;
 }
 .nav-links a:hover {
-  color: #4f46e5;
+  color: var(--primary);
 }
+
 .content-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 2rem 1rem;
 }
+
 .auth-box {
-  background: white;
-  padding: 2.5rem;
+  background: var(--card-bg);
+  padding: 2rem 1.5rem;
   border-radius: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-  max-width: 350px;
-  width: 90%;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
 }
+
 h2 {
   margin-top: 0;
-  color: #111827;
+  color: var(--text-main);
   margin-bottom: 1.5rem;
   text-align: center;
   font-size: 1.5rem;
 }
+
 .input-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
+
 label {
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #374151;
+  color: #334155;
 }
+
 input, select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  padding: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 16px; /* Prevents iOS auto-zoom */
   box-sizing: border-box;
+  background: #f8fafc;
+  transition: all 0.2s;
+  appearance: none;
 }
+
 input:focus, select:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
+
 button {
   width: 100%;
-  background: #4f46e5;
+  background: var(--primary);
   color: white;
   font-weight: 600;
+  font-family: inherit;
+  font-size: 1rem;
   padding: 0.875rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  margin-top: 1rem;
-  font-size: 1rem;
+  margin-top: 0.5rem;
+  transition: transform 0.1s, background-color 0.2s;
+  appearance: none;
 }
+
+button:active {
+  transform: scale(0.98);
+}
+
 button:hover {
-  background: #4338ca;
+  background: var(--primary-hover);
 }
+
 .link {
   display: block;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   font-size: 0.875rem;
-  color: #4f46e5;
+  color: var(--primary);
   text-decoration: none;
+  font-weight: 500;
 }
+
 #toast-container {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 90%;
+  max-width: 400px;
 }
+
 .toast {
   background: #1e293b;
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 14px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
   font-size: 0.875rem;
-  font-weight: 500;
-  animation: slideInLeft 0.3s ease-out forwards;
+  font-weight: 600;
+  text-align: center;
+  animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+
+@keyframes slideUpToast {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
-@keyframes fadeOut {
-  to { opacity: 0; }
+
+@keyframes fadeOutToast {
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nav-links {
+    justify-content: center;
+    width: 100%;
+  }
 }
 </style>
 </head>
@@ -162,6 +225,7 @@ button:hover {
       <a href="signup.html">Sign Up</a>
     </div>
   </header>
+  
   <div class="content-wrapper">
     <div class="auth-box">
       <h2>Create Account</h2>
@@ -171,7 +235,7 @@ button:hover {
       </div>
       <div class="input-group">
         <label>Username</label>
-        <input type="text" id="reg-user" placeholder="johndoe123">
+        <input type="text" id="reg-user" placeholder="johndoe123" autocomplete="off" autocorrect="off" autocapitalize="none">
       </div>
       <div class="input-group">
         <label>Password</label>
@@ -188,6 +252,7 @@ button:hover {
       <a href="login.html" class="link">Already have an account? Log In</a>
     </div>
   </div>
+  
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
 
@@ -205,7 +270,7 @@ function showToast(message, isError = false) {
   container.appendChild(toast);
   
   setTimeout(() => {
-    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+    toast.style.animation = 'fadeOutToast 0.3s ease-out forwards';
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
@@ -229,7 +294,8 @@ async function signup() {
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
     
     const data = await response.json();

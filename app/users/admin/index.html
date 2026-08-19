@@ -237,23 +237,43 @@ button:hover {
 .pending-card { border-left: 4px solid var(--primary); }
 .user-card { border-left: 4px solid var(--success); }
 
-.receipt-btn {
-  display: inline-block;
+.receipt-img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 0.5rem;
   margin-top: 0.75rem;
   margin-bottom: 0.25rem;
-  background: #f1f5f9;
-  color: var(--primary);
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: 1px solid var(--border);
-  text-align: center;
-  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: block;
 }
 
-.receipt-btn:hover { background: #e2e8f0; }
+.ai-scan-box {
+  background: #f1f5f9;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #334155;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+}
+
+.beta-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 
 .section-divider {
   margin: 1.5rem 0 1rem 0;
@@ -365,7 +385,7 @@ button:hover {
   <div class="nav-links">
     <a href="../../../index.html">Home</a>
     <a href="#" class="refresh-link" onclick="location.reload(); return false;">Refresh</a>
-    <a href="../../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin');">Log Out</a>
+    <a href="../../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin'); localStorage.removeItem('bankUserRole');">Log Out</a>
     <div class="user-badge">
       <span id="header-name">Loading...</span>
     </div>
@@ -471,6 +491,22 @@ button:hover {
   </div>
 </div>
 
+<div id="unlink-user-modal" class="modal-backdrop">
+  <div class="modal-content">
+    <h2 style="margin-top: 0; color: var(--danger);">Unlink User</h2>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Enter your admin password to confirm unlinking this account.</p>
+    <input type="hidden" id="unlink-target">
+    <div class="input-group">
+      <label>Your Admin Password</label>
+      <input type="password" id="unlink-admin-pass">
+    </div>
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+      <button onclick="closeUnlinkModal()" class="btn-secondary">Cancel</button>
+      <button onclick="confirmUnlink()" id="btn-unlink-user" class="btn-danger">Unlink Account</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
 let allUsersData = [];
@@ -512,6 +548,17 @@ function closeAddModal() {
   document.getElementById('new-name').value = '';
   document.getElementById('new-user').value = '';
   document.getElementById('new-pass').value = '';
+}
+
+function openUnlinkModal(targetUsername) {
+  document.getElementById('unlink-target').value = targetUsername;
+  document.getElementById('unlink-user-modal').style.display = 'flex';
+}
+
+function closeUnlinkModal() {
+  document.getElementById('unlink-user-modal').style.display = 'none';
+  document.getElementById('unlink-target').value = '';
+  document.getElementById('unlink-admin-pass').value = '';
 }
 
 async function linkUser() {
@@ -589,6 +636,48 @@ async function submitNewUser() {
   }
 }
 
+async function confirmUnlink() {
+  const targetU = document.getElementById('unlink-target').value;
+  const adminP = document.getElementById('unlink-admin-pass').value;
+  
+  if (!adminP) { showToast("Admin password is required", true); return; }
+  
+  const btn = document.getElementById('btn-unlink-user');
+  btn.innerText = "Processing...";
+  btn.disabled = true;
+  
+  const payload = { 
+    action: 'unlinkAccount', 
+    adminUsername: currentAdmin, 
+    adminPassword: adminP,
+    targetUsername: targetU 
+  };
+  
+  try {
+    const res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
+    });
+    const data = await res.json();
+    
+    if (data.status === 'success') {
+      showToast("Account unlinked.");
+      closeUnlinkModal();
+      location.reload();
+    } else {
+      showToast(data.message || "Error unlinking.", true);
+      btn.innerText = "Unlink Account";
+      btn.disabled = false;
+    }
+  } catch (e) {
+    showToast("Connection error.", true);
+    btn.innerText = "Unlink Account";
+    btn.disabled = false;
+  }
+}
+
 async function init() {
   if (!currentAdmin) {
     window.location.href = "../../../login.html";
@@ -620,9 +709,12 @@ async function init() {
         const div = document.createElement('div');
         div.className = 'user-card';
         div.innerHTML = `
-          <div>
-            <strong style="font-size: 1.125rem; color: var(--text-main); margin-bottom: 0.25rem; display: block;">${u.name} (@${u.username})</strong>
-            <span style="font-size: 0.875rem; color: var(--text-muted);">Role: ${u.role}</span>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <strong style="font-size: 1.125rem; color: var(--text-main); margin-bottom: 0.25rem; display: block;">${u.name} (@${u.username})</strong>
+              <span style="font-size: 0.875rem; color: var(--text-muted);">Role: ${u.role}</span>
+            </div>
+            <button class="btn-danger" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 0.5rem;" onclick="openUnlinkModal('${u.username}')">Unlink</button>
           </div>
           <div style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); font-size: 0.9rem; line-height: 1.6;">
             Cash: <strong style="color: var(--success);">${formatCurrency(u.cash)}</strong><br>
@@ -655,9 +747,10 @@ async function init() {
           <div>
             <strong style="font-size: 1.125rem; color: var(--text-main); display: block; margin-bottom: 0.25rem;">${p.item} (-${formatCurrency(p.cost)})</strong>
             <span style="font-size: 0.875rem; color: var(--text-muted);">@${p.username} | ${p.date}</span>
-            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" class="receipt-btn">📸 Open Receipt</a>` : ''}
+            ${p.receiptUrl ? `<img src="${p.receiptUrl}" class="receipt-img">` : ''}
+            ${p.receiptText ? `<div class="ai-scan-box"><strong>🤖 AI Scan <span class="beta-badge">BETA</span>:</strong><br>${p.receiptText}</div>` : ''}
           </div>
-          <div style="margin-top: 0.5rem;">
+          <div style="margin-top: 0.75rem;">
             <button class="btn-approve" onclick="process('${p.username}', ${p.row}, ${p.cost}, 'Approved')">Approve Request</button>
           </div>
         `;

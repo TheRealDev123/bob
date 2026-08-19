@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank System | Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  background: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f8fafc;
+  text-decoration: none;
+  display: flex;
+}
+.brand span {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: pre;
+  animation: spread 1s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+}
+@keyframes spread {
+  to { max-width: 80px; opacity: 1; }
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.nav-links a {
+  text-decoration: none;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.nav-links a:hover {
+  color: #ffffff;
+}
+
+.user-badge {
+  background: #334155;
+  color: #f8fafc;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid #475569;
+}
+
+.logout-link {
+  font-size: 0.875rem;
+  color: #ef4444;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 1rem;
+}
+
+.main-content {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: none;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-panel {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.grid-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+input, select {
+  padding: 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+button {
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+.pending-list, .user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pending-card, .user-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.pending-card {
+  border-left: 4px solid #3b82f6;
+  flex-direction: column;
+}
+
+.user-card {
+  border-left: 4px solid #10b981;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pc-info strong, .uc-info strong {
+  display: block;
+  font-size: 1.125rem;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.pc-info span, .uc-info span {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.uc-stats {
+  text-align: right;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.receipt-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background: #f1f5f9;
+  color: #3b82f6;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  text-align: center;
+  width: fit-content;
+}
+
+.receipt-btn:hover {
+  background: #e2e8f0;
+}
+
+.pc-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.btn-approve {
+  background: #10b981;
+  width: 100%;
+}
+
+.btn-approve:hover {
+  background: #059669;
+}
+
+.btn-danger {
+  background: #ef4444;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.section-divider {
+  margin: 2rem 0 1rem 0;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.panel-header h2 {
+  margin-bottom: 0;
+}
+
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: #1e293b;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../../../index.html" class="brand">B<span>ank </span>O<span>f </span>B<span>enny</span></a>
+  <div class="nav-links">
+    <a href="../../../index.html">Home</a>
+    <a href="../../../login.html">Log In</a>
+    <a href="../../../signup.html">Sign Up</a>
+    <span class="user-badge" id="header-name">Loading...</span>
+    <a href="../../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin');">Log Out</a>
+  </div>
+</header>
+
+<div id="loader" class="loader-container">
+  <div class="spinner"></div>
+  <div style="color: #64748b; font-weight: 500;">Loading...</div>
+</div>
+
+<div id="app" class="main-content">
+  <div class="dashboard-panel">
+    <div class="panel-header">
+      <h2>Managed Users</h2>
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="openLinkModal()" class="btn-approve" style="width: auto; padding: 0.5rem 1rem;">Link Account</button>
+        <button onclick="openAddModal()" class="btn-approve" style="width: auto; padding: 0.5rem 1rem; background: #3b82f6;">+ New Account</button>
+      </div>
+    </div>
+    <div id="user-list" class="user-list"></div>
+  </div>
+
+  <div class="dashboard-panel">
+    <h2>Pending Deductions</h2>
+    <div id="pending-list" class="pending-list"></div>
+  </div>
+
+  <div class="dashboard-panel">
+    <h2>Master Controls</h2>
+    
+    <div class="section-divider">Global Website Data</div>
+    <div class="grid-inputs">
+      <div class="input-group">
+        <label>BOB Stock Price</label>
+        <input type="number" id="a-stockPrice" step="0.01">
+      </div>
+    </div>
+
+    <div class="section-divider">Update User Balances</div>
+    <div class="grid-inputs">
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>Select User to Modify</label>
+        <select id="a-targetUser" onchange="loadSelectedUserData()"></select>
+      </div>
+      <div class="input-group">
+        <label>Available Cash</label>
+        <input type="number" id="a-cash" step="0.01">
+      </div>
+      <div class="input-group">
+        <label>Portfolio Value</label>
+        <input type="number" id="a-portfolioValue" step="0.01">
+      </div>
+      <div class="input-group">
+        <label>Total Spent</label>
+        <input type="number" id="a-totalSpent" step="0.01">
+      </div>
+    </div>
+
+    <button onclick="saveAdminData()" id="btn-save" style="margin-top: 1rem;">Save All Master Data</button>
+  </div>
+</div>
+
+<div id="link-user-modal" class="modal-backdrop">
+  <div class="modal-content">
+    <h2 style="margin-top: 0; color: #0f172a;">Link User Account</h2>
+    <p style="color: #475569; font-size: 0.875rem; margin-bottom: 1.5rem;">Enter the user's credentials to securely link their account to your admin dashboard.</p>
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" id="link-user" placeholder="Enter username">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="link-pass" placeholder="Enter password">
+    </div>
+    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+      <button onclick="closeLinkModal()" class="btn-danger" style="margin: 0;">Cancel</button>
+      <button onclick="linkUser()" id="btn-link-user" class="btn-approve" style="margin: 0;">Link Account</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-user-modal" class="modal-backdrop">
+  <div class="modal-content">
+    <h2 style="margin-top: 0; color: #0f172a;">Create New Account</h2>
+    <p style="color: #475569; font-size: 0.875rem; margin-bottom: 1.5rem;">Register a new user directly. They will be linked automatically.</p>
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="new-name" placeholder="E.g. Abel">
+    </div>
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" id="new-user" placeholder="E.g. abel123">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="new-pass" placeholder="Secure password">
+    </div>
+    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+      <button onclick="closeAddModal()" class="btn-danger" style="margin: 0;">Cancel</button>
+      <button onclick="submitNewUser()" id="btn-submit-user" class="btn-approve" style="margin: 0;">Create & Link</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
+let allUsersData = [];
+const currentAdmin = localStorage.getItem('bankUserLogin');
+
+function formatCurrency(val) {
+  return '$' + parseFloat(val).toFixed(2);
+}
+
+function showToast(message, isError = false) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  if (isError) toast.style.backgroundColor = '#ef4444';
+  toast.innerText = message;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function openLinkModal() { document.getElementById('link-user-modal').style.display = 'flex'; }
+function closeLinkModal() { 
+  document.getElementById('link-user-modal').style.display = 'none'; 
+  document.getElementById('link-user').value = '';
+  document.getElementById('link-pass').value = '';
+}
+
+function openAddModal() { document.getElementById('add-user-modal').style.display = 'flex'; }
+function closeAddModal() { 
+  document.getElementById('add-user-modal').style.display = 'none'; 
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-user').value = '';
+  document.getElementById('new-pass').value = '';
+}
+
+async function linkUser() {
+  const u = document.getElementById('link-user').value;
+  const p = document.getElementById('link-pass').value;
+
+  if (!u || !p) {
+    showToast("Please enter both username and password", true);
+    return;
+  }
+
+  const btn = document.getElementById('btn-link-user');
+  btn.innerText = "Loading...";
+  btn.disabled = true;
+
+  const payload = { action: 'linkAccount', adminUsername: currentAdmin, linkUsername: u, linkPassword: p };
+
+  try {
+    const res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    const data = await res.json();
+
+    if (data.status === 'success') {
+      showToast("Account successfully linked!");
+      closeLinkModal();
+      location.reload();
+    } else {
+      showToast("Invalid credentials.", true);
+      btn.innerText = "Link Account";
+      btn.disabled = false;
+    }
+  } catch (e) {
+    showToast("Error verifying connection.", true);
+    btn.innerText = "Link Account";
+    btn.disabled = false;
+  }
+}
+
+async function submitNewUser() {
+  const n = document.getElementById('new-name').value;
+  const u = document.getElementById('new-user').value;
+  const p = document.getElementById('new-pass').value;
+
+  if (!n || !u || !p) {
+    showToast("Please fill out all fields", true);
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit-user');
+  btn.innerText = "Loading...";
+  btn.disabled = true;
+
+  const payload = { action: 'signup', name: n, username: u, password: p, role: 'kid', parent: currentAdmin };
+
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    
+    const data = await response.json();
+    if (data.status === "error") {
+      showToast(data.message, true);
+      btn.innerText = "Create & Link";
+      btn.disabled = false;
+      return;
+    }
+    
+    showToast("New account created and linked!");
+    closeAddModal();
+    setTimeout(() => { location.reload(); }, 1000);
+  } catch (e) {
+    showToast("Error creating connection.", true);
+    btn.innerText = "Create & Link";
+    btn.disabled = false;
+  }
+}
+
+async function init() {
+  if (!currentAdmin) {
+    window.location.href = "../../../login.html";
+    return;
+  }
+
+  const userName = localStorage.getItem('bankUserName') || 'Parent Admin';
+  document.getElementById('header-name').innerText = userName + "'s Portal";
+
+  try {
+    const response = await fetch(WEB_APP_URL);
+    const data = await response.json();
+    
+    document.getElementById('a-stockPrice').value = data.stockPrice;
+    
+    allUsersData = (data.users || []).filter(u => u.parent === currentAdmin);
+    const managedUsernames = allUsersData.map(u => u.username);
+    
+    const userListContainer = document.getElementById('user-list');
+    const userSelect = document.getElementById('a-targetUser');
+    userListContainer.innerHTML = '';
+    userSelect.innerHTML = '';
+
+    if (allUsersData.length === 0) {
+      userListContainer.innerHTML = '<p style="color: #64748b;">No users linked yet. Add or link someone.</p>';
+      userSelect.innerHTML = '<option value="">No users available</option>';
+    } else {
+      allUsersData.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'user-card';
+        div.innerHTML = `
+          <div class="uc-info">
+            <strong>${u.name} (@${u.username})</strong>
+            <span>Role: ${u.role} | Parent: @${u.parent}</span>
+          </div>
+          <div class="uc-stats">
+            Cash: <span style="color: #10b981;">${formatCurrency(u.cash)}</span><br>
+            Portfolio: ${formatCurrency(u.portfolioValue)}<br>
+            Spent: ${formatCurrency(u.totalSpent)}
+          </div>
+        `;
+        userListContainer.appendChild(div);
+
+        const opt = document.createElement('option');
+        opt.value = u.username;
+        opt.textContent = `${u.name} (@${u.username})`;
+        userSelect.appendChild(opt);
+      });
+      loadSelectedUserData();
+    }
+
+    const pendingList = document.getElementById('pending-list');
+    pendingList.innerHTML = '';
+    
+    const pending = (data.purchases || []).filter(p => p.status === 'Pending' && managedUsernames.includes(p.username));
+    
+    if (pending.length === 0) {
+      pendingList.innerHTML = '<p style="color: #64748b;">No items pending review for linked users.</p>';
+    } else {
+      pending.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pending-card';
+        div.innerHTML = `
+          <div class="pc-info">
+            <strong>${p.item} (-${formatCurrency(p.cost)})</strong>
+            <span>Requested by: @${p.username} | Date: ${p.date}</span>
+            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" class="receipt-btn">📸 Open Receipt Image</a>` : ''}
+          </div>
+          <div class="pc-actions">
+            <button class="btn-approve" onclick="process('${p.username}', ${p.row}, ${p.cost}, 'Approved')">OK</button>
+          </div>
+        `;
+        pendingList.appendChild(div);
+      });
+    }
+    
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } catch (error) {
+    showToast('Failed to connect.', true);
+  }
+}
+
+function loadSelectedUserData() {
+  const selectedUser = document.getElementById('a-targetUser').value;
+  const user = allUsersData.find(u => u.username === selectedUser);
+  if (user) {
+    document.getElementById('a-cash').value = user.cash;
+    document.getElementById('a-portfolioValue').value = user.portfolioValue;
+    document.getElementById('a-totalSpent').value = user.totalSpent;
+  }
+}
+
+async function process(username, row, cost, decision) {
+  const payload = {
+    action: 'processPurchase',
+    username: username,
+    row: row,
+    cost: cost,
+    decision: decision
+  };
+  
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loader').style.display = 'flex';
+  
+  try {
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    location.reload();
+  } catch (error) {
+    showToast('Error processing.', true);
+    location.reload();
+  }
+}
+
+async function saveAdminData() {
+  const btn = document.getElementById('btn-save');
+  btn.innerText = 'Loading...';
+  btn.disabled = true;
+  
+  const payload = {
+    action: 'saveAdmin',
+    stockPrice: parseFloat(document.getElementById('a-stockPrice').value) || 0,
+    targetUser: document.getElementById('a-targetUser').value,
+    cash: parseFloat(document.getElementById('a-cash').value) || 0,
+    portfolioValue: parseFloat(document.getElementById('a-portfolioValue').value) || 0,
+    totalSpent: parseFloat(document.getElementById('a-totalSpent').value) || 0
+  };
+
+  try {
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    showToast('Master data saved!');
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  } catch (error) {
+    showToast('Error saving data.', true);
+    btn.innerText = 'Save All Master Data';
+    btn.disabled = false;
+  }
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank System | Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #4f46e5;
+  text-decoration: none;
+  display: flex;
+}
+.brand span {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: pre;
+  animation: spread 1s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+}
+@keyframes spread {
+  to { max-width: 80px; opacity: 1; }
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.nav-links a {
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.nav-links a:hover {
+  color: #4f46e5;
+}
+
+.user-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.refresh-link {
+  font-size: 0.875rem;
+  color: #10b981 !important;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 1rem;
+  cursor: pointer;
+}
+.refresh-link:hover {
+  color: #059669 !important;
+}
+
+.logout-link {
+  font-size: 0.875rem;
+  color: #ef4444 !important;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.main-content {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: none;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.metric-title {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+}
+.metric-cash {
+  color: #10b981;
+}
+
+.form-section, .history-section {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #111827;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+button {
+  width: 100%;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+button:hover {
+  background: #4338ca;
+}
+
+.btn-secondary {
+  background: #6b7280;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-success {
+  background: #10b981;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+.btn-danger {
+  background: #ef4444;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.cam-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cam-controls button {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.camera-container {
+  width: 100%;
+  max-width: 400px;
+  background: #000;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+video {
+  width: 100%;
+  display: block;
+}
+
+img#photo-preview {
+  width: 100%;
+}
+
+.purchase-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  background: #f9fafb;
+}
+
+.p-info strong {
+  display: block;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.p-info span {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.p-amount {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+  text-align: right;
+}
+
+.p-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 0.25rem;
+}
+
+.status-Pending { background: #fef3c7; color: #b45309; }
+.status-Approved { background: #d1fae5; color: #047857; }
+.status-Rejected { background: #fee2e2; color: #b91c1c; }
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: #1e293b;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../../index.html" class="brand">B<span>ank </span>O<span>f </span>B<span>enny</span></a>
+  <div class="nav-links">
+    <a href="../../index.html">Home</a>
+    <a href="../../login.html">Log In</a>
+    <a href="../../signup.html">Sign Up</a>
+    <div class="user-badge">
+      <span id="header-name">Loading...</span>
+      <div id="parent-label" style="font-size: 0.75rem; color: #4338ca; font-weight: 600; margin-top: 0.25rem;"></div>
+    </div>
+    <a href="#" class="refresh-link" onclick="location.reload(); return false;">Refresh</a>
+    <a href="../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin');">Log Out</a>
+  </div>
+</header>
+
+<div id="loader" class="loader-container">
+  <div class="spinner"></div>
+  <div style="color: #64748b; font-weight: 500;">Loading...</div>
+</div>
+
+<div id="app" class="main-content">
+  <div class="grid">
+    <div class="card">
+      <div class="metric-title">Available Cash</div>
+      <div class="metric-value metric-cash" id="val-cash">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">Portfolio Value</div>
+      <div class="metric-value" id="val-portfolio">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">Total Spent</div>
+      <div class="metric-value" id="val-totalSpent">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="metric-title">BOB Stock Price</div>
+      <div class="metric-value" id="val-stock">$0.00</div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h2>Log a New Purchase</h2>
+    <div class="input-group">
+      <label>Item Description</label>
+      <input type="text" id="p-item" placeholder="What did you buy?">
+    </div>
+    <div class="input-group">
+      <label>Cost</label>
+      <input type="number" id="p-cost" step="0.01" placeholder="0.00">
+    </div>
+    
+    <div class="input-group">
+      <label>Take Receipt Photo</label>
+      <button type="button" id="btn-start-cam" class="btn-secondary" style="margin-bottom: 0.5rem;">Start Camera</button>
+      
+      <div class="camera-container" id="camera-container" style="display: none;">
+        <video id="camera-stream" autoplay playsinline></video>
+        <canvas id="camera-canvas" style="display: none;"></canvas>
+        <img id="photo-preview" style="display: none;">
+      </div>
+      <div class="cam-controls" id="cam-controls" style="display: none;">
+        <button type="button" id="btn-switch-cam" class="btn-secondary">Flip</button>
+        <button type="button" id="btn-capture" class="btn-success">Snap</button>
+        <button type="button" id="btn-retake" class="btn-danger" style="display: none;">Retake</button>
+      </div>
+    </div>
+    
+    <button onclick="submitPurchase()" id="btn-submit" style="margin-top: 1rem;">Submit for Review</button>
+  </div>
+
+  <div class="history-section">
+    <h2>My Purchase History</h2>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<script>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
+
+let currentFacingMode = 'environment';
+let stream = null;
+let capturedImageBase64 = null;
+const currentUsername = localStorage.getItem('bankUserLogin');
+
+function showToast(message, isError = false) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  if (isError) toast.style.backgroundColor = '#ef4444';
+  toast.innerText = message;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function formatCurrency(val) {
+  return '$' + parseFloat(val).toFixed(2);
+}
+
+async function startCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+  const constraints = {
+    video: { facingMode: currentFacingMode }
+  };
+  try {
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    document.getElementById('camera-stream').srcObject = stream;
+  } catch (err) {
+    showToast('Camera access denied or unavailable.', true);
+  }
+}
+
+document.getElementById('btn-start-cam').addEventListener('click', () => {
+  document.getElementById('btn-start-cam').style.display = 'none';
+  document.getElementById('camera-container').style.display = 'flex';
+  document.getElementById('cam-controls').style.display = 'flex';
+  startCamera();
+});
+
+document.getElementById('btn-switch-cam').addEventListener('click', () => {
+  currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+  startCamera();
+});
+
+document.getElementById('btn-capture').addEventListener('click', () => {
+  const video = document.getElementById('camera-stream');
+  const canvas = document.getElementById('camera-canvas');
+  const preview = document.getElementById('photo-preview');
+  
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+  
+  video.style.display = 'none';
+  preview.src = capturedImageBase64;
+  preview.style.display = 'block';
+  
+  document.getElementById('btn-capture').style.display = 'none';
+  document.getElementById('btn-switch-cam').style.display = 'none';
+  document.getElementById('btn-retake').style.display = 'block';
+});
+
+document.getElementById('btn-retake').addEventListener('click', () => {
+  capturedImageBase64 = null;
+  document.getElementById('camera-stream').style.display = 'block';
+  document.getElementById('photo-preview').style.display = 'none';
+  
+  document.getElementById('btn-capture').style.display = 'block';
+  document.getElementById('btn-switch-cam').style.display = 'block';
+  document.getElementById('btn-retake').style.display = 'none';
+});
+
+async function init() {
+  if (!currentUsername) {
+    window.location.href = "../../login.html";
+    return;
+  }
+
+  const userName = localStorage.getItem('bankUserName') || 'User';
+  document.getElementById('header-name').innerText = userName + "'s Account";
+
+  try {
+    const response = await fetch(WEB_APP_URL, { redirect: 'follow' });
+    const data = await response.json();
+    
+    document.getElementById('val-stock').innerText = formatCurrency(data.stockPrice);
+    
+    const myUserData = data.users.find(u => u.username === currentUsername);
+    if (myUserData) {
+      document.getElementById('val-cash').innerText = formatCurrency(myUserData.cash);
+      document.getElementById('val-portfolio').innerText = formatCurrency(myUserData.portfolioValue);
+      document.getElementById('val-totalSpent').innerText = formatCurrency(myUserData.totalSpent);
+      
+      if (myUserData.parent) {
+        document.getElementById('parent-label').innerText = `Managed by @${myUserData.parent}`;
+      }
+    }
+    
+    const list = document.getElementById('history-list');
+    list.innerHTML = '';
+    
+    const myPurchases = (data.purchases || []).filter(p => p.username === currentUsername);
+    
+    if (myPurchases.length === 0) {
+      list.innerHTML = '<p style="color: #6b7280;">No purchases found.</p>';
+    } else {
+      myPurchases.slice().reverse().forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'purchase-item';
+        div.innerHTML = `
+          <div class="p-info">
+            <strong>${p.item}</strong>
+            <span>${p.date}</span>
+            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" style="font-size: 0.875rem; color: #4f46e5;">View Receipt</a>` : ''}
+          </div>
+          <div class="p-amount">
+            ${formatCurrency(p.cost)}
+            <br>
+            <span class="p-status status-${p.status}">${p.status}</span>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+    
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } catch (error) {
+    showToast('Failed to connect to the bank.', true);
+  }
+}
+
+async function submitPurchase() {
+  const item = document.getElementById('p-item').value;
+  const cost = parseFloat(document.getElementById('p-cost').value);
+  
+  if (!item || isNaN(cost) || cost <= 0) {
+    showToast('Invalid details', true);
+    return;
+  }
+  
+  const btn = document.getElementById('btn-submit');
+  btn.innerText = 'Loading...';
+  btn.disabled = true;
+  
+  let imageType = null;
+  let fileName = null;
+  
+  if (capturedImageBase64) {
+    imageType = 'image/jpeg';
+    fileName = 'receipt_' + Date.now() + '.jpg';
+  }
+  
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+  
+  const payload = {
+    action: 'submitPurchase',
+    username: currentUsername,
+    item: item,
+    cost: cost,
+    image: capturedImageBase64,
+    imageType: imageType,
+    fileName: fileName
+  };
+  
+  try {
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
+    });
+    showToast('Submitted successfully!');
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  } catch (error) {
+    showToast('Error submitting', true);
+    btn.innerText = 'Submit for Review';
+    btn.disabled = false;
+  }
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

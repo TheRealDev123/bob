@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank System | Dashboard</title>
 <link rel="icon" type="image/png" href="../../bank.png">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -171,7 +172,7 @@ label {
   color: #334155;
 }
 
-input {
+input, select, textarea {
   width: 100%;
   padding: 0.875rem;
   border: 1px solid var(--border);
@@ -184,7 +185,12 @@ input {
   appearance: none;
 }
 
-input:focus {
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--primary);
   background: #ffffff;
@@ -206,8 +212,13 @@ button {
   appearance: none;
 }
 
-button:active {
+button:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -267,6 +278,15 @@ video, img#photo-preview {
   color: var(--text-muted);
 }
 
+.receipt-img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 0.5rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: block;
+}
+
 .p-amount-container {
   display: flex;
   justify-content: space-between;
@@ -294,6 +314,22 @@ video, img#photo-preview {
 .status-Pending { background: #fef3c7; color: #b45309; }
 .status-Approved { background: #d1fae5; color: #047857; }
 .status-Rejected { background: #fee2e2; color: #b91c1c; }
+
+.btn-delete-history {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  width: auto;
+  margin: 0;
+}
+
+.btn-delete-history:hover {
+  background: var(--danger);
+  color: white;
+}
 
 .loader-container {
   display: flex;
@@ -329,7 +365,6 @@ video, img#photo-preview {
   width: 90%;
   max-width: 400px;
 }
-
 .toast {
   background: #1e293b;
   color: white;
@@ -341,12 +376,10 @@ video, img#photo-preview {
   text-align: center;
   animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 @keyframes slideUpToast {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
-
 @keyframes fadeOutToast {
   to { opacity: 0; transform: translateY(20px); }
 }
@@ -370,7 +403,7 @@ video, img#photo-preview {
   <div class="nav-links">
     <a href="../../index.html">Home</a>
     <a href="#" class="refresh-link" onclick="location.reload(); return false;">Refresh</a>
-    <a href="../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin');">Log Out</a>
+    <a href="../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin'); localStorage.removeItem('bankUserRole');">Log Out</a>
     <div class="user-badge">
       <span id="header-name">Loading...</span>
       <div id="parent-label" style="font-size: 0.7rem; color: #4338ca; font-weight: 600; margin-top: 0.2rem;"></div>
@@ -407,7 +440,7 @@ video, img#photo-preview {
     <h2>Log a New Purchase</h2>
     <div class="input-group">
       <label>Item Description</label>
-      <input type="text" id="p-item" placeholder="What did you buy?">
+      <textarea id="p-item" placeholder="What did you buy?"></textarea>
     </div>
     <div class="input-group">
       <label>Cost</label>
@@ -456,7 +489,7 @@ function showToast(message, isError = false) {
   }
   const toast = document.createElement('div');
   toast.className = 'toast';
-  if (isError) toast.style.backgroundColor = '#ef4444';
+  if (isError) toast.style.backgroundColor = 'var(--danger)';
   toast.innerText = message;
   container.appendChild(toast);
   
@@ -568,10 +601,13 @@ async function init() {
           <div class="p-info">
             <strong>${p.item}</strong>
             <span>${p.date}</span>
-            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" style="font-size: 0.875rem; color: var(--primary); font-weight: 600;">View Receipt 📸</a>` : ''}
+            ${p.receiptUrl ? `<img src="${p.receiptUrl}" class="receipt-img">` : ''}
           </div>
           <div class="p-amount-container">
-            <span class="p-status status-${p.status}">${p.status}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="p-status status-${p.status}">${p.status}</span>
+              ${p.status !== 'Pending' ? `<button onclick="deletePurchase('${p.id}')" class="btn-delete-history">Delete</button>` : ''}
+            </div>
             <span class="p-amount">${formatCurrency(p.cost)}</span>
           </div>
         `;
@@ -596,16 +632,26 @@ async function submitPurchase() {
   }
   
   const btn = document.getElementById('btn-submit');
-  btn.innerText = 'Loading...';
   btn.disabled = true;
   
   let imageType = null;
   let fileName = null;
+  let receiptText = "";
   
   if (capturedImageBase64) {
     imageType = 'image/jpeg';
     fileName = 'receipt_' + Date.now() + '.jpg';
+    
+    btn.innerText = 'Scanning receipt...';
+    try {
+      const result = await Tesseract.recognize(capturedImageBase64, 'eng');
+      receiptText = result.data.text;
+    } catch(e) {
+      console.log("OCR Error", e);
+    }
   }
+  
+  btn.innerText = 'Loading...';
   
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
@@ -618,7 +664,8 @@ async function submitPurchase() {
     cost: cost,
     image: capturedImageBase64,
     imageType: imageType,
-    fileName: fileName
+    fileName: fileName,
+    receiptText: receiptText
   };
   
   try {
@@ -636,6 +683,31 @@ async function submitPurchase() {
     showToast('Error submitting', true);
     btn.innerText = 'Submit for Review';
     btn.disabled = false;
+  }
+}
+
+async function deletePurchase(id) {
+  if (!confirm("Are you sure you want to delete this purchase from your history?")) return;
+  
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loader').style.display = 'flex';
+  
+  const payload = {
+    action: 'deletePurchase',
+    id: id
+  };
+  
+  try {
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
+    });
+    location.reload();
+  } catch (error) {
+    showToast('Error deleting.', true);
+    location.reload();
   }
 }
 

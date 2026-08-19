@@ -2,35 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank System | Admin</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #10b981;
+  --danger: #ef4444;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
 }
 
 header {
-  background: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  background: var(--card-bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   position: sticky;
   top: 0;
   z-index: 50;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .brand {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--primary);
   text-decoration: none;
   display: flex;
 }
@@ -48,241 +62,203 @@ header {
 
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 .nav-links a {
   text-decoration: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: color 0.2s;
 }
 .nav-links a:hover {
-  color: #ffffff;
+  color: var(--primary);
 }
 
 .user-badge {
-  background: #334155;
-  color: #f8fafc;
+  background: #e0e7ff;
+  color: #4338ca;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-weight: 600;
   font-size: 0.875rem;
-  border: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.refresh-link {
+  color: var(--success) !important;
 }
 
 .logout-link {
-  font-size: 0.875rem;
-  color: #ef4444;
-  text-decoration: none;
-  font-weight: 600;
-  margin-left: 1rem;
+  color: var(--danger) !important;
 }
 
 .main-content {
   max-width: 900px;
-  margin: 2rem auto;
+  margin: 1.5rem auto;
   padding: 0 1rem;
   display: none;
-  animation: slideUp 0.5s ease-out forwards;
+  animation: slideUp 0.4s ease-out forwards;
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-panel {
-  background: white;
+  background: var(--card-bg);
   border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
 }
 
 h2 {
   margin-top: 0;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #0f172a;
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+  color: var(--text-main);
+}
+
+.panel-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel-header h2 {
+  margin-bottom: 0;
+}
+
+.panel-header .btn-group {
+  display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .grid-inputs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
 }
 
 label {
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #475569;
+  color: #334155;
 }
 
 input, select {
   padding: 0.875rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 16px; /* Prevents iOS Zoom */
   background: #f8fafc;
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
+  appearance: none;
 }
 
 input:focus, select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--primary);
   background: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
 button {
-  background: #3b82f6;
+  background: var(--primary);
   color: white;
   font-weight: 600;
   font-family: inherit;
   font-size: 1rem;
   padding: 0.875rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: transform 0.1s, background-color 0.2s;
   width: 100%;
+  appearance: none;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 button:hover {
-  background: #2563eb;
+  background: var(--primary-hover);
 }
+
+.btn-approve { background: var(--success); }
+.btn-approve:hover { background: #059669; }
+.btn-danger { background: var(--danger); }
+.btn-danger:hover { background: #dc2626; }
+.btn-small { width: auto; padding: 0.6rem 1rem; font-size: 0.875rem; }
 
 .pending-list, .user-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .pending-card, .user-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
   display: flex;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.pending-card {
-  border-left: 4px solid #3b82f6;
   flex-direction: column;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
-.user-card {
-  border-left: 4px solid #10b981;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pc-info strong, .uc-info strong {
-  display: block;
-  font-size: 1.125rem;
-  color: #0f172a;
-  margin-bottom: 0.25rem;
-}
-
-.pc-info span, .uc-info span {
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.uc-stats {
-  text-align: right;
-  font-weight: 600;
-  color: #0f172a;
-}
+.pending-card { border-left: 4px solid var(--primary); }
+.user-card { border-left: 4px solid var(--success); }
 
 .receipt-btn {
   display: inline-block;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
   background: #f1f5f9;
-  color: #3b82f6;
-  padding: 0.75rem 1rem;
+  color: var(--primary);
+  padding: 0.6rem 1rem;
   border-radius: 0.5rem;
   text-decoration: none;
   font-weight: 600;
-  border: 1px solid #cbd5e1;
+  font-size: 0.875rem;
+  border: 1px solid var(--border);
   text-align: center;
   width: fit-content;
 }
 
-.receipt-btn:hover {
-  background: #e2e8f0;
-}
-
-.pc-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.btn-approve {
-  background: #10b981;
-  width: 100%;
-}
-
-.btn-approve:hover {
-  background: #059669;
-}
-
-.btn-danger {
-  background: #ef4444;
-}
-
-.btn-danger:hover {
-  background: #dc2626;
-}
-
-.loader-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+.receipt-btn:hover { background: #e2e8f0; }
 
 .section-divider {
-  margin: 2rem 0 1rem 0;
-  border-bottom: 2px solid #e2e8f0;
+  margin: 1.5rem 0 1rem 0;
+  border-bottom: 2px solid var(--border);
   padding-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .modal-backdrop {
@@ -300,8 +276,8 @@ button:hover {
 }
 
 .modal-content {
-  background: white;
-  padding: 2.5rem;
+  background: var(--card-bg);
+  padding: 2rem 1.5rem;
   border-radius: 1rem;
   width: 90%;
   max-width: 400px;
@@ -309,42 +285,68 @@ button:hover {
   animation: slideUp 0.3s ease-out forwards;
 }
 
-.panel-header {
+.loader-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  height: 60vh;
 }
 
-.panel-header h2 {
-  margin-bottom: 0;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 #toast-container {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 90%;
+  max-width: 400px;
 }
 .toast {
   background: #1e293b;
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 14px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
   font-size: 0.875rem;
-  font-weight: 500;
-  animation: slideInLeft 0.3s ease-out forwards;
+  font-weight: 600;
+  text-align: center;
+  animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+@keyframes slideUpToast {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
-@keyframes fadeOut {
-  to { opacity: 0; }
+@keyframes fadeOutToast {
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nav-links {
+    justify-content: center;
+    width: 100%;
+  }
 }
 </style>
 </head>
@@ -354,25 +356,26 @@ button:hover {
   <a href="../../../index.html" class="brand">B<span>ank </span>O<span>f </span>B<span>enny</span></a>
   <div class="nav-links">
     <a href="../../../index.html">Home</a>
-    <a href="../../../login.html">Log In</a>
-    <a href="../../../signup.html">Sign Up</a>
-    <span class="user-badge" id="header-name">Loading...</span>
+    <a href="#" class="refresh-link" onclick="location.reload(); return false;">Refresh</a>
     <a href="../../../login.html" class="logout-link" onclick="localStorage.removeItem('bankUserName'); localStorage.removeItem('bankUserLogin');">Log Out</a>
+    <div class="user-badge">
+      <span id="header-name">Loading...</span>
+    </div>
   </div>
 </header>
 
 <div id="loader" class="loader-container">
   <div class="spinner"></div>
-  <div style="color: #64748b; font-weight: 500;">Loading...</div>
+  <div style="color: var(--text-muted); font-weight: 500;">Loading...</div>
 </div>
 
 <div id="app" class="main-content">
   <div class="dashboard-panel">
     <div class="panel-header">
       <h2>Managed Users</h2>
-      <div style="display: flex; gap: 0.5rem;">
-        <button onclick="openLinkModal()" class="btn-approve" style="width: auto; padding: 0.5rem 1rem;">Link Account</button>
-        <button onclick="openAddModal()" class="btn-approve" style="width: auto; padding: 0.5rem 1rem; background: #3b82f6;">+ New Account</button>
+      <div class="btn-group">
+        <button onclick="openLinkModal()" class="btn-approve btn-small">Link Account</button>
+        <button onclick="openAddModal()" class="btn-small">New Account</button>
       </div>
     </div>
     <div id="user-list" class="user-list"></div>
@@ -390,27 +393,27 @@ button:hover {
     <div class="grid-inputs">
       <div class="input-group">
         <label>BOB Stock Price</label>
-        <input type="number" id="a-stockPrice" step="0.01">
+        <input type="number" id="a-stockPrice" step="0.01" inputmode="decimal">
       </div>
     </div>
 
     <div class="section-divider">Update User Balances</div>
     <div class="grid-inputs">
       <div class="input-group" style="grid-column: 1 / -1;">
-        <label>Select User to Modify</label>
+        <label>Select User</label>
         <select id="a-targetUser" onchange="loadSelectedUserData()"></select>
       </div>
       <div class="input-group">
         <label>Available Cash</label>
-        <input type="number" id="a-cash" step="0.01">
+        <input type="number" id="a-cash" step="0.01" inputmode="decimal">
       </div>
       <div class="input-group">
         <label>Portfolio Value</label>
-        <input type="number" id="a-portfolioValue" step="0.01">
+        <input type="number" id="a-portfolioValue" step="0.01" inputmode="decimal">
       </div>
       <div class="input-group">
         <label>Total Spent</label>
-        <input type="number" id="a-totalSpent" step="0.01">
+        <input type="number" id="a-totalSpent" step="0.01" inputmode="decimal">
       </div>
     </div>
 
@@ -418,44 +421,45 @@ button:hover {
   </div>
 </div>
 
+<!-- Modals -->
 <div id="link-user-modal" class="modal-backdrop">
   <div class="modal-content">
-    <h2 style="margin-top: 0; color: #0f172a;">Link User Account</h2>
-    <p style="color: #475569; font-size: 0.875rem; margin-bottom: 1.5rem;">Enter the user's credentials to securely link their account to your admin dashboard.</p>
+    <h2 style="margin-top: 0;">Link User</h2>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Enter the user's credentials to securely link their account.</p>
     <div class="input-group">
       <label>Username</label>
-      <input type="text" id="link-user" placeholder="Enter username">
+      <input type="text" id="link-user">
     </div>
     <div class="input-group">
       <label>Password</label>
-      <input type="password" id="link-pass" placeholder="Enter password">
+      <input type="password" id="link-pass">
     </div>
-    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-      <button onclick="closeLinkModal()" class="btn-danger" style="margin: 0;">Cancel</button>
-      <button onclick="linkUser()" id="btn-link-user" class="btn-approve" style="margin: 0;">Link Account</button>
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+      <button onclick="closeLinkModal()" class="btn-danger">Cancel</button>
+      <button onclick="linkUser()" id="btn-link-user" class="btn-approve">Link</button>
     </div>
   </div>
 </div>
 
 <div id="add-user-modal" class="modal-backdrop">
   <div class="modal-content">
-    <h2 style="margin-top: 0; color: #0f172a;">Create New Account</h2>
-    <p style="color: #475569; font-size: 0.875rem; margin-bottom: 1.5rem;">Register a new user directly. They will be linked automatically.</p>
+    <h2 style="margin-top: 0;">Create Account</h2>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Register a new user directly. They will be linked automatically.</p>
     <div class="input-group">
       <label>Full Name</label>
-      <input type="text" id="new-name" placeholder="E.g. Abel">
+      <input type="text" id="new-name">
     </div>
     <div class="input-group">
       <label>Username</label>
-      <input type="text" id="new-user" placeholder="E.g. abel123">
+      <input type="text" id="new-user">
     </div>
     <div class="input-group">
       <label>Password</label>
-      <input type="password" id="new-pass" placeholder="Secure password">
+      <input type="password" id="new-pass">
     </div>
-    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-      <button onclick="closeAddModal()" class="btn-danger" style="margin: 0;">Cancel</button>
-      <button onclick="submitNewUser()" id="btn-submit-user" class="btn-approve" style="margin: 0;">Create & Link</button>
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+      <button onclick="closeAddModal()" class="btn-danger">Cancel</button>
+      <button onclick="submitNewUser()" id="btn-submit-user" class="btn-approve">Create</button>
     </div>
   </div>
 </div>
@@ -478,12 +482,12 @@ function showToast(message, isError = false) {
   }
   const toast = document.createElement('div');
   toast.className = 'toast';
-  if (isError) toast.style.backgroundColor = '#ef4444';
+  if (isError) toast.style.backgroundColor = 'var(--danger)';
   toast.innerText = message;
   container.appendChild(toast);
   
   setTimeout(() => {
-    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+    toast.style.animation = 'fadeOutToast 0.3s ease-out forwards';
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
@@ -507,10 +511,7 @@ async function linkUser() {
   const u = document.getElementById('link-user').value;
   const p = document.getElementById('link-pass').value;
 
-  if (!u || !p) {
-    showToast("Please enter both username and password", true);
-    return;
-  }
+  if (!u || !p) { showToast("Please enter both username and password", true); return; }
 
   const btn = document.getElementById('btn-link-user');
   btn.innerText = "Loading...";
@@ -522,7 +523,8 @@ async function linkUser() {
     const res = await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
     const data = await res.json();
 
@@ -532,12 +534,12 @@ async function linkUser() {
       location.reload();
     } else {
       showToast("Invalid credentials.", true);
-      btn.innerText = "Link Account";
+      btn.innerText = "Link";
       btn.disabled = false;
     }
   } catch (e) {
     showToast("Error verifying connection.", true);
-    btn.innerText = "Link Account";
+    btn.innerText = "Link";
     btn.disabled = false;
   }
 }
@@ -547,10 +549,7 @@ async function submitNewUser() {
   const u = document.getElementById('new-user').value;
   const p = document.getElementById('new-pass').value;
 
-  if (!n || !u || !p) {
-    showToast("Please fill out all fields", true);
-    return;
-  }
+  if (!n || !u || !p) { showToast("Please fill out all fields", true); return; }
 
   const btn = document.getElementById('btn-submit-user');
   btn.innerText = "Loading...";
@@ -562,13 +561,14 @@ async function submitNewUser() {
     const response = await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
     
     const data = await response.json();
     if (data.status === "error") {
       showToast(data.message, true);
-      btn.innerText = "Create & Link";
+      btn.innerText = "Create";
       btn.disabled = false;
       return;
     }
@@ -577,9 +577,8 @@ async function submitNewUser() {
     closeAddModal();
     setTimeout(() => { location.reload(); }, 1000);
   } catch (e) {
-    showToast("Error creating connection.", true);
-    btn.innerText = "Create & Link";
-    btn.disabled = false;
+    showToast("Request sent. Refreshing...", true);
+    setTimeout(() => { location.reload(); }, 1000);
   }
 }
 
@@ -593,7 +592,7 @@ async function init() {
   document.getElementById('header-name').innerText = userName + "'s Portal";
 
   try {
-    const response = await fetch(WEB_APP_URL);
+    const response = await fetch(WEB_APP_URL, { redirect: 'follow' });
     const data = await response.json();
     
     document.getElementById('a-stockPrice').value = data.stockPrice;
@@ -607,21 +606,21 @@ async function init() {
     userSelect.innerHTML = '';
 
     if (allUsersData.length === 0) {
-      userListContainer.innerHTML = '<p style="color: #64748b;">No users linked yet. Add or link someone.</p>';
+      userListContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.875rem;">No users linked yet. Add or link someone.</p>';
       userSelect.innerHTML = '<option value="">No users available</option>';
     } else {
       allUsersData.forEach(u => {
         const div = document.createElement('div');
         div.className = 'user-card';
         div.innerHTML = `
-          <div class="uc-info">
-            <strong>${u.name} (@${u.username})</strong>
-            <span>Role: ${u.role} | Parent: @${u.parent}</span>
+          <div>
+            <strong style="font-size: 1.125rem; color: var(--text-main); margin-bottom: 0.25rem; display: block;">${u.name} (@${u.username})</strong>
+            <span style="font-size: 0.875rem; color: var(--text-muted);">Role: ${u.role}</span>
           </div>
-          <div class="uc-stats">
-            Cash: <span style="color: #10b981;">${formatCurrency(u.cash)}</span><br>
-            Portfolio: ${formatCurrency(u.portfolioValue)}<br>
-            Spent: ${formatCurrency(u.totalSpent)}
+          <div style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); font-size: 0.9rem; line-height: 1.6;">
+            Cash: <strong style="color: var(--success);">${formatCurrency(u.cash)}</strong><br>
+            Portfolio: <strong>${formatCurrency(u.portfolioValue)}</strong><br>
+            Spent: <strong>${formatCurrency(u.totalSpent)}</strong>
           </div>
         `;
         userListContainer.appendChild(div);
@@ -640,19 +639,19 @@ async function init() {
     const pending = (data.purchases || []).filter(p => p.status === 'Pending' && managedUsernames.includes(p.username));
     
     if (pending.length === 0) {
-      pendingList.innerHTML = '<p style="color: #64748b;">No items pending review for linked users.</p>';
+      pendingList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.875rem;">No items pending review.</p>';
     } else {
       pending.forEach(p => {
         const div = document.createElement('div');
         div.className = 'pending-card';
         div.innerHTML = `
-          <div class="pc-info">
-            <strong>${p.item} (-${formatCurrency(p.cost)})</strong>
-            <span>Requested by: @${p.username} | Date: ${p.date}</span>
-            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" class="receipt-btn">📸 Open Receipt Image</a>` : ''}
+          <div>
+            <strong style="font-size: 1.125rem; color: var(--text-main); display: block; margin-bottom: 0.25rem;">${p.item} (-${formatCurrency(p.cost)})</strong>
+            <span style="font-size: 0.875rem; color: var(--text-muted);">@${p.username} | ${p.date}</span>
+            ${p.receiptUrl ? `<br><a href="${p.receiptUrl}" target="_blank" class="receipt-btn">📸 Open Receipt</a>` : ''}
           </div>
-          <div class="pc-actions">
-            <button class="btn-approve" onclick="process('${p.username}', ${p.row}, ${p.cost}, 'Approved')">OK</button>
+          <div style="margin-top: 0.5rem;">
+            <button class="btn-approve" onclick="process('${p.username}', ${p.row}, ${p.cost}, 'Approved')">Approve Request</button>
           </div>
         `;
         pendingList.appendChild(div);
@@ -677,13 +676,7 @@ function loadSelectedUserData() {
 }
 
 async function process(username, row, cost, decision) {
-  const payload = {
-    action: 'processPurchase',
-    username: username,
-    row: row,
-    cost: cost,
-    decision: decision
-  };
+  const payload = { action: 'processPurchase', username: username, row: row, cost: cost, decision: decision };
   
   document.getElementById('app').style.display = 'none';
   document.getElementById('loader').style.display = 'flex';
@@ -692,7 +685,8 @@ async function process(username, row, cost, decision) {
     await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
     location.reload();
   } catch (error) {
@@ -719,12 +713,11 @@ async function saveAdminData() {
     await fetch(WEB_APP_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow'
     });
     showToast('Master data saved!');
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
+    setTimeout(() => { location.reload(); }, 1000);
   } catch (error) {
     showToast('Error saving data.', true);
     btn.innerText = 'Save All Master Data';

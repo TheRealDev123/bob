@@ -474,6 +474,7 @@ video, img#photo-preview {
 
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzu5ogZ5pOWrj4dA9QJkS-lxz4OMu7ZBF09VRFqzXO-g13vXUfCcqBWWcTRcAvdTcRY/exec';
+const GEMINI_API_KEY = 'AQ.Ab8RN6I-SfRtvFWOZIjMaSgEw3BgE0gEFh6BjS6yIgpB2DzaEw';
 
 let currentFacingMode = 'environment';
 let stream = null;
@@ -514,7 +515,7 @@ async function startCamera() {
     stream = await navigator.mediaDevices.getUserMedia(constraints);
     document.getElementById('camera-stream').srcObject = stream;
   } catch (err) {
-    showToast('Camera access denied or unavailable.', true);
+    showToast('Camera access denied.', true);
   }
 }
 
@@ -535,9 +536,21 @@ document.getElementById('btn-capture').addEventListener('click', () => {
   const canvas = document.getElementById('camera-canvas');
   const preview = document.getElementById('photo-preview');
   
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  const maxDim = 800;
+  let w = video.videoWidth;
+  let h = video.videoHeight;
+  
+  if (w > h && w > maxDim) {
+    h = Math.round((h * maxDim) / w);
+    w = maxDim;
+  } else if (h > maxDim) {
+    w = Math.round((w * maxDim) / h);
+    h = maxDim;
+  }
+  
+  canvas.width = w;
+  canvas.height = h;
+  canvas.getContext('2d').drawImage(video, 0, 0, w, h);
   
   capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
   
@@ -570,7 +583,8 @@ async function init() {
   document.getElementById('header-name').innerText = userName + "'s Account";
 
   try {
-    const response = await fetch(WEB_APP_URL, { redirect: 'follow' });
+    // FIXED: Appended a timestamp cache-buster so the browser ALWAYS gets fresh data
+    const response = await fetch(WEB_APP_URL + "?nocache=" + new Date().getTime(), { redirect: 'follow' });
     const data = await response.json();
     
     document.getElementById('val-stock').innerText = formatCurrency(data.stockPrice);
@@ -642,13 +656,30 @@ async function submitPurchase() {
     imageType = 'image/jpeg';
     fileName = 'receipt_' + Date.now() + '.jpg';
     
-    btn.innerText = 'Scanning receipt...';
+    btn.innerText = 'Scanning receipt with AI...';
+    
+    const base64Data = capturedImageBase64.split(',')[1];
+    const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_API_KEY;
+    const geminiPayload = {
+      contents: [{
+        parts: [
+          {text: "Extract all text from this receipt. Summarize the total and main items if possible."},
+          {inline_data: {mime_type: "image/jpeg", data: base64Data}}
+        ]
+      }]
+    };
+    
     try {
-      const result = await Tesseract.recognize(capturedImageBase64, 'eng');
-      receiptText = result.data.text;
-    } catch(e) {
-      console.log("OCR Error", e);
-    }
+      const geminiRes = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(geminiPayload)
+      });
+      const geminiData = await geminiRes.json();
+      if (geminiData.candidates && geminiData.candidates.length > 0) {
+        receiptText = geminiData.candidates[0].content.parts[0].text;
+      }
+    } catch(e) {}
   }
   
   btn.innerText = 'Loading...';
@@ -673,7 +704,7 @@ async function submitPurchase() {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      redirect: 'follow'
+      mode: 'no-cors'
     });
     showToast('Submitted successfully!');
     setTimeout(() => {
@@ -702,7 +733,7 @@ async function deletePurchase(id) {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      redirect: 'follow'
+      mode: 'no-cors'
     });
     location.reload();
   } catch (error) {
